@@ -124,12 +124,15 @@ session_start();
                                     fetch('verifyOtp.php', {
                                         method: 'POST',
                                         headers: {'Content-Type': 'application/json'},
+                                        credentials: 'same-origin', 
                                         body: JSON.stringify({ otp })
                                     })
                                     .then(res => res.json())
                                     .then(data => {
                                         if(data.success){
                                             Swal.fire({icon: 'success', title: '', text: 'You are signed in'});
+                                            window.location.href = 'index.php';
+
                                         }
                                         else {
                                             Swal.fire({ icon: 'error', text: 'Wrong OTP' });
