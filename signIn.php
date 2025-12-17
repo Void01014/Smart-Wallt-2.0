@@ -8,6 +8,8 @@ use PHPMailer\PHPMailer\SMTP;
 // Load Composer's autoloader
 require 'vendor/autoload.php';
 
+session_start();
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -31,7 +33,8 @@ require 'vendor/autoload.php';
             <div class="modal bg-white w-[500px] rounded-2xl p-10 flex flex-col items-center gap-4">
                 <h2 class="text-2xl" id="modalTitle">Verification</h2>
                 <h4>Please enter the code sent to yourr email</h4>
-                <input class="bg-white rounded-lg p-2 px-7 w-30" placeholder="ex:041214" type="text" name="otp" id="otp">
+                <input class="bg-white rounded-lg p-2 px-7 w-30 border" placeholder="ex:041214" type="text" name="otp" id="otp">
+                <button class="border py-2 px-5 bg-cyan-400 rounded-[15px] color-white" onclick="verify()">Verify</button>
             </div>
         </div>
 
@@ -71,14 +74,15 @@ require 'vendor/autoload.php';
 
                 if (password_verify($password, $stored_hash)) {
                     $otp = random_int(100000, 999999);
+                    $_SESSION['otp'] = $otp;
                     $mail = new PHPMailer(true);
 
                     try {
                         $mail->isSMTP();
                         $mail->Host       = 'smtp.gmail.com';
                         $mail->SMTPAuth   = true;
-                        $mail->Username   = 'omarelfiie2007@gmail.com';
-                        $mail->Password   = 'vuvk rkaq evqf fubg';
+                        $mail->Password = getenv('MAIL_PASSWORD');
+                        $mail->Username = getenv('MAIL_EMAIL');
                         $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
                         $mail->Port       = 587;
 
@@ -110,11 +114,28 @@ require 'vendor/autoload.php';
                                         </table>
                                         ';
                         $mail->AltBody = 'This is the plain text body for non-HTML mail clients.';
-
                         $mail->send();
                         echo "<script>
                                 const overlay = document.getElementById('overlay');
                                 overlay.classList.remove('hidden');
+                                function verify() {
+                                    const otp = document.getElementById('otp').value;
+
+                                    fetch('verifyOtp.php', {
+                                        method: 'POST',
+                                        headers: {'Content-Type': 'application/json'},
+                                        body: JSON.stringify({ otp })
+                                    })
+                                    .then(res => res.json())
+                                    .then(data => {
+                                        if(data.success){
+                                            Swal.fire({icon: 'success', title: '', text: 'You are signed in'});
+                                        }
+                                        else {
+                                            Swal.fire({ icon: 'error', text: 'Wrong OTP' });
+                                        }
+                                    });
+                                }   
                               </script>";
                     } catch (Exception $e) {
                         echo "❌ Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
