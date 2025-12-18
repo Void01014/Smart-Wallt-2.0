@@ -49,6 +49,7 @@ session_start();
                 <input class="bg-white rounded-lg p-2 w-full" placeholder="password" type="password" name="password" id="password">
             </div>
             <button class="w-50 bg-white p-2 rounded-lg mt-10 hover:shadow-[0_0_10px_gray] hover:bg-blue-500 hover:scale-110 hover:text-white transition duration-200 cursor-pointer" type="submit" name="signIn">Sign In</button>
+            <a class="underline" href="signUp.php">Sign Up</a>
         </form>
     </main>
 
@@ -59,8 +60,7 @@ session_start();
         {
             $email = $_POST["email"];
             $password = $_POST["password"];
-            $hash = password_hash($password, PASSWORD_DEFAULT);
-            $sql = "SELECT username, email, password
+            $sql = "SELECT id, username, email, password
                     FROM users WHERE email = ?";
 
             $stmt = mysqli_prepare($conn, $sql);
@@ -68,6 +68,7 @@ session_start();
             mysqli_stmt_execute($stmt);
             $result = mysqli_stmt_get_result($stmt);
             if ($row = mysqli_fetch_assoc($result)) {
+                $id = $row['id'];
                 $stored_hash = $row['password'];
                 $fetched_email = $row['email'];
                 $username = $row['username'];
@@ -75,6 +76,7 @@ session_start();
                 if (password_verify($password, $stored_hash)) {
                     $otp = random_int(100000, 999999);
                     $_SESSION['otp'] = $otp;
+                    $_SESSION['otp_id'] = $id;
                     $mail = new PHPMailer(true);
 
                     try {
@@ -87,7 +89,7 @@ session_start();
                         $mail->Port       = 587;
 
                         $mail->setFrom('omarelfiie2007@gmail.com', 'Live Coding Masters');
-                        $mail->addAddress('omarelfiie2007@gmail.com', 'Bruh');
+                        $mail->addAddress($fetched_email, '');
 
                         $mail->isHTML(true);
                         $mail->Subject = 'Live Coding Test';
@@ -120,19 +122,17 @@ session_start();
                                 overlay.classList.remove('hidden');
                                 function verify() {
                                     const otp = document.getElementById('otp').value;
-
+                                    const otp_id = $id;
                                     fetch('verifyOtp.php', {
                                         method: 'POST',
                                         headers: {'Content-Type': 'application/json'},
                                         credentials: 'same-origin', 
-                                        body: JSON.stringify({ otp })
+                                        body: JSON.stringify({ otp , otp_id})
                                     })
                                     .then(res => res.json())
                                     .then(data => {
                                         if(data.success){
-                                            Swal.fire({icon: 'success', title: '', text: 'You are signed in'});
                                             window.location.href = 'index.php';
-
                                         }
                                         else {
                                             Swal.fire({ icon: 'error', text: 'Wrong OTP' });

@@ -1,8 +1,6 @@
 <?php
 include("database.php");
 include("verifyUser.php");
-
-session_start()
 ?>
 <!DOCTYPE html>
 <html lang="en">

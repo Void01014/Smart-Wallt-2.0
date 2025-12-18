@@ -1,36 +1,3 @@
-CREATE TABLE income (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    type VARCHAR(100),
-    amount DECIMAL(10,2) NOT NULL,
-    date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    description TEXT
-);
-
-CREATE TABLE expense (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    type VARCHAR(100),
-    amount DECIMAL(10,2) NOT NULL,
-    date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    description TEXT
-);
-
-INSERT INTO income (type, amount, date, description)
-                    VALUES ('$type', '$amount', '$date', '$desc')
-
-INSERT INTO expense (type, amount, date, description)
-                    VALUES ('$type', '$amount', '$date', '$desc')
-
-SELECT 'income' AS mode, id,type, amount, date, description
-                        FROM income
-                        UNION ALL
-                        SELECT 'expense' AS mode, id,type, amount, date, description
-                        FROM expense
-                        ORDER BY id;
-
-DELETE FROM $mode WHERE id = $id
-
-UPDATE $mode SET type = ?, amount = ?, description = ?, date = ? WHERE id = ?
-
 CREATE TABLE users (
     id INT AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR(50) NOT NULL,
@@ -38,5 +5,25 @@ CREATE TABLE users (
     password VARCHAR(255) NOT NULL
 );
 
-INSERT INTO users (username, email, password)
-                        VALUES (?, ?, ?)
+CREATE TABLE cards (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    user_id INT NOT NULL,
+    company_name ENUM('VISA', 'Mastercard', 'Wafacash', 'CIB') NOT NULL,
+    balance DECIMAL(10,2) NOT NULL,
+    created_date DATE NOT NULL DEFAULT CURRENT_DATE,
+    FOREIGN KEY (user_id) REFERENCES users(id)
+);
+
+CREATE TABLE transactions (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    user_id INT,
+    card_id INT,
+    mode ENUM('income', 'expense', 'transfer'),
+    type VARCHAR(100),
+    amount DECIMAL(10,2) NOT NULL,
+    description TEXT,
+    from_entity VARCHAR(50) NULL,
+    to_entity VARCHAR(50) NULL,
+    date DATE,
+    FOREIGN KEY (card_id) REFERENCES cards(id)
+);

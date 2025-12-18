@@ -34,6 +34,7 @@ include("database.php");
                 <input class="bg-white rounded-lg p-2 w-full" placeholder="password" type="password" name="password" id="password">
             </div>
             <button class="w-50 bg-white p-2 rounded-lg mt-10 hover:shadow-[0_0_10px_gray] hover:bg-blue-500 hover:scale-110 hover:text-white transition duration-200 cursor-pointer" type="submit" name="signUp">Sign Up</button>
+            <a class="underline" href="signIn.php">Sign in</a>
         </form>
     </main>
 
@@ -53,7 +54,7 @@ include("database.php");
             mysqli_stmt_execute($stmt);
             mysqli_stmt_close($stmt);
             echo "<script>Swal.fire({icon: 'success', title: 'Good Job', text: 'Your account was created successfully'}).then(() => {
-                  window.location.href = 'signUp.php';
+                  window.location.href = 'creat_card.php';
                   });</script>";
         }
         

@@ -1,5 +1,5 @@
 let form = document.querySelector("#form");
-let card_name = document.querySelector("#card_name");
+let username = document.querySelector("#username");
 let email = document.querySelector("#email");
 let password = document.querySelector("#password");
 
