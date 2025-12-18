@@ -1,5 +1,8 @@
 <?php
 include("database.php");
+include("verifyUser.php");
+
+
 // Import PHPMailer classes into the global namespace
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
@@ -7,8 +10,6 @@ use PHPMailer\PHPMailer\SMTP;
 
 // Load Composer's autoloader
 require 'vendor/autoload.php';
-
-session_start();
 
 ?>
 <!DOCTYPE html>

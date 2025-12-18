@@ -54,11 +54,6 @@ form.addEventListener('submit', (e) => {
         e.preventDefault()
         return
     }
-    if (form.querySelector('[name="amount"]').value < 0) {
-        Swal.fire({icon: "error", title: "Oops...", text: "Please enter a valid amount",});
-        e.preventDefault()
-        return
-    }
     if (!string_RGX.test(form.querySelector('[name="desc"]').value)) {
         Swal.fire({icon: "error", title: "Oops...", text: "Please enter a valid description",});
         e.preventDefault()

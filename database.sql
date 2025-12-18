@@ -11,6 +11,7 @@ CREATE TABLE cards (
     company_name ENUM('VISA', 'Mastercard', 'Wafacash', 'CIB') NOT NULL,
     balance DECIMAL(10,2) NOT NULL,
     created_date DATE NOT NULL DEFAULT CURRENT_DATE,
+    is_primary BOOLEAN NOT NULL UNIQUE,
     FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
@@ -24,6 +25,8 @@ CREATE TABLE transactions (
     description TEXT,
     from_entity VARCHAR(50) NULL,
     to_entity VARCHAR(50) NULL,
+    recipient_id INT NULL,
+    recipient_email VARCHAR(255) NULL,
     date DATE,
     FOREIGN KEY (card_id) REFERENCES cards(id)
 );

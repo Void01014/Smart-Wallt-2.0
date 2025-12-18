@@ -1,5 +1,8 @@
 <?php
 include("database.php");
+include("verifyUser.php");
+include("navbar.php");
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -19,11 +22,11 @@ include("database.php");
 
 <body class="relative flex justify-center font-mono">
     <main class="md:w-[30%] h-[100vh]">
-        <form action="signUp.php" method="post" class="flex flex-col items-center gap-5 h-full bg-cyan-400 shadow-[0_0_20px_gray] p-15" id="form">
+        <form action="create_card.php" method="post" class="flex flex-col items-center gap-5 h-full bg-cyan-400 shadow-[0_0_20px_gray] p-15" id="form">
             <h1 class="text-4xl text-center text-white mt-20">Create a Card</h1>
             <div class="w-full">
                 <label for="card_name">Card Name</label>
-                <input class="bg-white rounded-lg p-2 w-full" placeholder="Make a name for your card" type="text" name="    " id="card_name">
+                <input class="bg-white rounded-lg p-2 w-full" placeholder="Make a name for your card" type="text" name="card_name" id="card_name">
             </div>
             <div class="w-full">
                 <label for="company_name">Selecet a Company</label>
@@ -62,7 +65,7 @@ include("database.php");
             mysqli_stmt_bind_param($stmt, "dssd", $_SESSION['login_id'], $card_name, $company_name, $balance);
             mysqli_stmt_execute($stmt);
             mysqli_stmt_close($stmt);
-            echo "<script>Swal.fire({icon: 'success', title: 'Good Job', text: 'Your account was created successfully, timer: 2000'}).then(() => {
+            echo "<script>Swal.fire({icon: 'success', title: 'Good Job', text: 'Your account was created successfully'}).then(() => {
                   window.location.href = 'index.php';
                   });</script>";
         }
