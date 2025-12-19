@@ -5,13 +5,13 @@ $id = $_SESSION['login_id'];
 
 $user_cards = [];
 
-$fetch_cards_sql = "SELECT card_name FROM cards WHERE user_id = $id";
+$fetch_cards_sql = "SELECT id, card_name FROM cards WHERE user_id = $id";
 
 $result = mysqli_query($conn, $fetch_cards_sql);
 while($row = mysqli_fetch_assoc($result)){
-    $user_cards[] = $row['card_name'];
+    $user_cards[$row['id']] = $row['card_name'];
 }
-print_r($user_cards);
+
 ?>
 
 
@@ -37,15 +37,14 @@ print_r($user_cards);
     ?>
     <main class="md:w-[30%] h-[100vh]">
         <form action="transaction.php" method="post" class="flex flex-col items-center gap-5 h-full bg-cyan-400 shadow-[0_0_20px_gray] p-15" id="form">
-            <input type="hidden" name="mode" value="income">
             <h1 class="text-4xl text-center text-white">Transactions</h1>
             <div class="w-full">
-                <label for="card">Card</label>
-                <select name="card" id="card" class="bg-white w-full rounded-lg p-2">
+                <label for="card_id">Card</label>
+                <select name="card_id" id="card_id" class="bg-white w-full rounded-lg p-2">
                     <option value="default" disabled selected>choose a card</option>
                     <?php
-                        foreach($user_cards as $card){
-                            echo "<option value=$card>$card</option>" . '<br>';
+                        foreach($user_cards as $id => $name){
+                            echo "<option value='$id'>$name</option>" . '<br>';
                         }
                     ?>                    
                 </select>
@@ -55,6 +54,7 @@ print_r($user_cards);
                 <input class="bg-white rounded-lg p-2 w-full" placeholder="Amount" type="number" step="0.1" name="amount" id="amount">
             </div>
             <div class="w-full">
+                <input type="hidden" name="id_form" id="id_form" value="email">
                 <label for="recipient_field">Recipient ID</label>
                 <span class="text-gray-200">(use email or id)</span>
                 <div class="mb-2 flex" id="switch">
@@ -77,19 +77,30 @@ print_r($user_cards);
 
     <?php
     if (isset($_POST["add"])) {
-        $mode = $_POST["mode"];
-        $type = $_POST["type"];
+        $mode = "send";
+        $card_id = $_POST["card_id"];
         $amount = $_POST["amount"];
+        $id_form = $_POST["id_form"];
+        $recipient_id = $_POST["recipient_field"];
         $date = $_POST["date"];
         $desc = $_POST["desc"];
-        $sql = "INSERT INTO transactions (user_id, card_id, type, amount, description, from_entity, to_entity, date, recipient_id_id, recipient_email)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-        $stmt = mysqli_prepare($conn, $sql);
-        mysqli_stmt_bind_param($stmt, "sdss", $type, $amount, $date, $desc);
-        mysqli_stmt_execute($stmt);
-        mysqli_stmt_close($stmt);
+
+        echo "<br>" . $id_form . "<br>";
+        echo "<br>" . $card_id . "<br>";
+
+        if($id_form == "email"){
+            $sql = "INSERT INTO transactions (user_id, card_id, type, amount, description, from_entity, to_entity, date, recipient_email)
+                    VALUES (?, ?, ?, ?, ?, ?, ?)";
+        }else{
+            $sql = "INSERT INTO transactions (user_id, card_id, type, amount, description, from_entity, to_entity, date, recipient_id)
+                    VALUES (?, ?, ?, ?, ?, ?, ?)";
+        }
+        // $stmt = mysqli_prepare($conn, $sql);-
+        // mysqli_stmt_bind_param($stmt, "dsdss", $type, $amount, $date, $desc);
+        // mysqli_stmt_execute($stmt);
+        // mysqli_stmt_close($stmt);
         echo "<script>Swal.fire({icon: 'success', title: 'Operation successful', text: 'Your {$mode} has been added'}).then(() => {
-              window.location.href = 'manager.php';
+              window.location.href = 'transaction.php';
               });</script>";
         
     }
