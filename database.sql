@@ -17,10 +17,9 @@ CREATE TABLE cards (
 
 CREATE TABLE transactions (
     id INT PRIMARY KEY AUTO_INCREMENT,
-    user_id INT,
     card_id INT,
-    mode ENUM('income', 'expense', 'transfer'),
-    type VARCHAR(100),
+    mode ENUM('income', 'expense', 'transfer') NOT NULL,
+    category VARCHAR(255),
     amount DECIMAL(10,2) NOT NULL,
     description TEXT,
     from_entity VARCHAR(50) NULL,
@@ -28,5 +27,17 @@ CREATE TABLE transactions (
     recipient_id INT NULL,
     recipient_email VARCHAR(255) NULL,
     date DATE,
+    FOREIGN KEY (card_id) REFERENCES cards(id)
+);
+
+CREATE TABLE recc_transactions (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    card_id INT,
+    mode ENUM('income', 'expense', 'transfer') NOT NULL,
+    category VARCHAR(255),
+    amount DECIMAL(10,2) NOT NULL,
+    from_entity VARCHAR(50) NULL,
+    start_date DATE,
+    ADD recurrence VARCHAR(20) DEFAULT 'none',
     FOREIGN KEY (card_id) REFERENCES cards(id)
 );

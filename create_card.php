@@ -20,10 +20,10 @@ include("navbar.php");
 <script>
 </script>
 
-<body class="relative flex justify-center font-mono">
-    <main class="md:w-[30%] h-[100vh]">
+<body class="md:flex relative justify-center font-mono bg-gray-50 h-full">
+    <main class="md:w-[30%] h-[100%]">
         <form action="create_card.php" method="post" class="flex flex-col items-center gap-5 h-full bg-cyan-400 shadow-[0_0_20px_gray] p-15" id="form">
-            <h1 class="text-4xl text-center text-white mt-20">Create a Card</h1>
+            <h1 class="text-4xl text-center text-white">Create a Card</h1>
             <div class="w-full">
                 <label for="card_name">Card Name</label>
                 <input class="bg-white rounded-lg p-2 w-full" placeholder="Make a name for your card" type="text" name="card_name" id="card_name">

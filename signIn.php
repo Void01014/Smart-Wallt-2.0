@@ -33,7 +33,7 @@ require 'vendor/autoload.php';
         <div class="flex justify-center items-center overlay absolute left-0 h-[100vh] w-[100vw] bg-[#00000070] hidden" id="overlay" aria-hidden="true">
             <div class="modal bg-white w-[500px] rounded-2xl p-10 flex flex-col items-center gap-4">
                 <h2 class="text-2xl" id="modalTitle">Verification</h2>
-                <h4>Please enter the code sent to yourr email</h4>
+                <h4>Please enter the code sent to your email</h4>
                 <input class="bg-white rounded-lg p-2 px-7 w-30 border" placeholder="ex:041214" type="text" name="otp" id="otp">
                 <button class="border py-2 px-5 bg-cyan-400 rounded-[15px] color-white" onclick="verify()">Verify</button>
             </div>

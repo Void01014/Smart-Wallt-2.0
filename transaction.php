@@ -31,7 +31,7 @@ while($row = mysqli_fetch_assoc($result)){
 <script>
 </script>
 
-<body class="relative flex justify-center font-mono">
+<body class="md:flex relative justify-center font-mono bg-gray-50">
     <?php
         include("navbar.php");
     ?>
@@ -78,13 +78,12 @@ while($row = mysqli_fetch_assoc($result)){
     <?php
     if (isset($_POST["add"])) {
         $sender_id = (int) $_SESSION['login_id'];
-        $mode = "send";
+        $mode = "transfer";
         $card_id = (int) $_POST["card_id"];
-        $type = NULL;
+        $category = "send";
         $amount = floatval($_POST["amount"]);
-        $recipient_id = trim($_POST["recipient_field"]); 
+        $recipient_field = trim($_POST["recipient_field"]); 
         $id_form = $_POST["id_form"];
-        $recipient_id = $_POST["recipient_field"];
         $date = $_POST["date"];
         $desc = trim($_POST["desc"]);
 
@@ -94,34 +93,36 @@ while($row = mysqli_fetch_assoc($result)){
         if (empty($desc)) $desc = "No description"; 
 
         $fetch_sender_sql = "SELECT username FROM users WHERE id = ?";
-        $fetch_recipient_sql = "SELECT username FROM users WHERE id = ? OR email = ?";
+        $fetch_recipient_sql = "SELECT username, id, email FROM users WHERE id = ? OR email = ?";
 
         $stmt1 = mysqli_prepare($conn, $fetch_sender_sql);
         $stmt2 = mysqli_prepare($conn, $fetch_recipient_sql);
 
         mysqli_stmt_bind_param($stmt1, "i", $sender_id);
-        mysqli_stmt_bind_param($stmt2, "ss", $recipient_id, $recipient_id);
+        mysqli_stmt_bind_param($stmt2, "ss", $recipient_field, $recipient_field);
 
         mysqli_stmt_execute($stmt1);
         $senderRS = mysqli_stmt_get_result($stmt1);
         
         mysqli_stmt_execute($stmt2);
         $recipientRS = mysqli_stmt_get_result($stmt2);
+        $recipient_data = mysqli_fetch_assoc($recipientRS);
 
         $sender_username = mysqli_fetch_assoc($senderRS)['username'];
-        $recipient_username = mysqli_fetch_assoc($recipientRS)['username'];
-                
+        $recipient_id = (int) $recipient_data['id'];
+        $recipient_username = $recipient_data['username'];
+        $recipient_email = $recipient_data['email'];                
 
 
         if($id_form == "email"){
-            $sql = "INSERT INTO transactions (card_id, mode, type, amount, description, from_entity, to_entity, date, recipient_email)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            $sql = "INSERT INTO transactions (card_id, mode, category, amount, description, from_entity, to_entity, recipient_id, recipient_email, date)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         }else{
-            $sql = "INSERT INTO transactions (card_id, mode, type, amount, description, from_entity, to_entity, date, recipient_id)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            $sql = "INSERT INTO transactions (card_id, mode, category, amount, description, from_entity, to_entity, recipient_id, recipient_email, date)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         }
         $stmt = mysqli_prepare($conn, $sql);
-        mysqli_stmt_bind_param($stmt, "issdsssss", $card_id, $mode, $type, $amount, $desc, $sender_username, $recipient_username ,$date, $recipient_id);
+        mysqli_stmt_bind_param($stmt, "issdsssdss", $card_id, $mode, $category, $amount, $desc, $sender_username, $recipient_username , $recipient_id, $recipient_email, $date);
         mysqli_stmt_execute($stmt);
         mysqli_stmt_close($stmt);
         echo "<script>Swal.fire({icon: 'success', title: 'Operation successful', text: 'Your {$mode} has been added'}).then(() => {
