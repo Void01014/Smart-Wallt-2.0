@@ -31,12 +31,12 @@ form.addEventListener('submit', (e) => {
         e.preventDefault()
         return
     }
-    if (!amount_RGX.test(amount.value) || amount.value < 0) {
+    if (!amount_RGX.test(amount.value) || amount.value <= 0) {
         Swal.fire({icon: "error", title: "Oops...", text: "Please enter a valid amount",});
         e.preventDefault()
         return
     }
-    if (email.classList.contains('selected') && !email_RGX.test(recipient_field.value)) {
+    if (email.classList.contains('selected') && !email_RGX.test(recipient_field.value.trim())) {
         Swal.fire({
             icon: "error",
             title: "Oops...",
@@ -45,7 +45,7 @@ form.addEventListener('submit', (e) => {
         e.preventDefault();
         return
     }
-    if (id.classList.contains('selected') && !id_RGX.test(recipient_field.value) || recipient_field.value < 0) {
+    if (id.classList.contains('selected') && !id_RGX.test(recipient_field.value.trim()) || recipient_field.value < 0) {
         Swal.fire({icon: "error", title: "Oops...", text: "Please enter a valid id",});
         e.preventDefault()
         return
@@ -55,7 +55,7 @@ form.addEventListener('submit', (e) => {
         e.preventDefault()
         return
     }
-    if (!string_RGX.test(form.querySelector('[name="desc"]').value)) {
+    if (!string_RGX.test(form.querySelector('[name="desc"]').value.trim())) {
         Swal.fire({icon: "error", title: "Oops...", text: "Please enter a valid description",});
         e.preventDefault()
         return

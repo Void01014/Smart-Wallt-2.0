@@ -77,28 +77,53 @@ while($row = mysqli_fetch_assoc($result)){
 
     <?php
     if (isset($_POST["add"])) {
+        $sender_id = (int) $_SESSION['login_id'];
         $mode = "send";
-        $card_id = $_POST["card_id"];
-        $amount = $_POST["amount"];
+        $card_id = (int) $_POST["card_id"];
+        $type = NULL;
+        $amount = floatval($_POST["amount"]);
+        $recipient_id = trim($_POST["recipient_field"]); 
         $id_form = $_POST["id_form"];
         $recipient_id = $_POST["recipient_field"];
         $date = $_POST["date"];
-        $desc = $_POST["desc"];
+        $desc = trim($_POST["desc"]);
 
-        echo "<br>" . $id_form . "<br>";
-        echo "<br>" . $card_id . "<br>";
+        //I verify for simple input
+        if ($card_id <= 0) die("Invalid card selection");
+        if ($amount <= 0) die("Amount must be positive");
+        if (empty($desc)) $desc = "No description"; 
+
+        $fetch_sender_sql = "SELECT username FROM users WHERE id = ?";
+        $fetch_recipient_sql = "SELECT username FROM users WHERE id = ? OR email = ?";
+
+        $stmt1 = mysqli_prepare($conn, $fetch_sender_sql);
+        $stmt2 = mysqli_prepare($conn, $fetch_recipient_sql);
+
+        mysqli_stmt_bind_param($stmt1, "i", $sender_id);
+        mysqli_stmt_bind_param($stmt2, "ss", $recipient_id, $recipient_id);
+
+        mysqli_stmt_execute($stmt1);
+        $senderRS = mysqli_stmt_get_result($stmt1);
+        
+        mysqli_stmt_execute($stmt2);
+        $recipientRS = mysqli_stmt_get_result($stmt2);
+
+        $sender_username = mysqli_fetch_assoc($senderRS)['username'];
+        $recipient_username = mysqli_fetch_assoc($recipientRS)['username'];
+                
+
 
         if($id_form == "email"){
-            $sql = "INSERT INTO transactions (user_id, card_id, type, amount, description, from_entity, to_entity, date, recipient_email)
-                    VALUES (?, ?, ?, ?, ?, ?, ?)";
+            $sql = "INSERT INTO transactions (card_id, mode, type, amount, description, from_entity, to_entity, date, recipient_email)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
         }else{
-            $sql = "INSERT INTO transactions (user_id, card_id, type, amount, description, from_entity, to_entity, date, recipient_id)
-                    VALUES (?, ?, ?, ?, ?, ?, ?)";
+            $sql = "INSERT INTO transactions (card_id, mode, type, amount, description, from_entity, to_entity, date, recipient_id)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
         }
-        // $stmt = mysqli_prepare($conn, $sql);-
-        // mysqli_stmt_bind_param($stmt, "dsdss", $type, $amount, $date, $desc);
-        // mysqli_stmt_execute($stmt);
-        // mysqli_stmt_close($stmt);
+        $stmt = mysqli_prepare($conn, $sql);
+        mysqli_stmt_bind_param($stmt, "issdsssss", $card_id, $mode, $type, $amount, $desc, $sender_username, $recipient_username ,$date, $recipient_id);
+        mysqli_stmt_execute($stmt);
+        mysqli_stmt_close($stmt);
         echo "<script>Swal.fire({icon: 'success', title: 'Operation successful', text: 'Your {$mode} has been added'}).then(() => {
               window.location.href = 'transaction.php';
               });</script>";
