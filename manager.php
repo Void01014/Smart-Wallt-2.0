@@ -96,7 +96,6 @@ while ($row = mysqli_fetch_assoc($result)) {
 
         function normal_push($conn, $mode)
         {
-            $user_id = (int) $_SESSION['login_id'];
             $card_id = (int) $_POST["card_id"];
             $category = $_POST["category"];
             $amount = floatval($_POST["amount"]);
@@ -108,19 +107,11 @@ while ($row = mysqli_fetch_assoc($result)) {
             if ($amount <= 0) die("Amount must be positive");
             if (empty($desc)) $desc = "No description";
 
-            $fetch_user_sql = "SELECT username FROM users WHERE id = ?";
-
-            $stmt1 = mysqli_prepare($conn, $fetch_user_sql);
-            mysqli_stmt_bind_param($stmt1, "i", $user_id);
-            mysqli_stmt_execute($stmt1);
-            $userRS = mysqli_stmt_get_result($stmt1);
-            $user_username = mysqli_fetch_assoc($userRS)['username'];
-
-            $sql = "INSERT INTO transactions (card_id, mode, category, amount, description, from_entity, date)
-                    VALUES (?, ?, ?, ?, ?, ?, ?)";
+            $sql = "INSERT INTO transactions (card_id, mode, category, amount, description, date)
+                    VALUES (?, ?, ?, ?, ?, ?)";
 
             $stmt = mysqli_prepare($conn, $sql);
-            mysqli_stmt_bind_param($stmt, "issdsss", $card_id, $mode, $category, $amount, $desc, $user_username, $date);
+            mysqli_stmt_bind_param($stmt, "issdss", $card_id, $mode, $category, $amount, $desc, $date);
             mysqli_stmt_execute($stmt);
             mysqli_stmt_close($stmt);
             echo "<script>Swal.fire({icon: 'success', title: 'Operation successful', text: 'Your {$mode} has been added'}).then(() => {
@@ -130,7 +121,6 @@ while ($row = mysqli_fetch_assoc($result)) {
 
         function recc_push($conn, $mode, $repeat)
         {
-            $user_id = (int) $_SESSION['login_id'];
             $card_id = (int) $_POST["card_id"];
             $category = $_POST["category"];
             $amount = floatval($_POST["amount"]);
@@ -141,14 +131,6 @@ while ($row = mysqli_fetch_assoc($result)) {
             if ($card_id <= 0) die("Invalid card selection");
             if ($amount <= 0) die("Amount must be positive");
             if (empty($desc)) $desc = "No description";
-
-            $fetch_user_sql = "SELECT username FROM users WHERE id = ?";
-
-            $stmt1 = mysqli_prepare($conn, $fetch_user_sql);
-            mysqli_stmt_bind_param($stmt1, "i", $user_id);
-            mysqli_stmt_execute($stmt1);
-            $userRS = mysqli_stmt_get_result($stmt1);
-            $user_username = mysqli_fetch_assoc($userRS)['username'];
 
             $sql = "INSERT INTO recc_transactions (card_id, mode, category, amount, description, start_date, recurrence)
                     VALUES (?, ?, ?, ?, ?, ?, ?)";

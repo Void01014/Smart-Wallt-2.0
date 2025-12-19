@@ -24,8 +24,18 @@ include("verifyUser.php");
 
     <main class="flex-1 w-full flex justify-center gap-20 flex-wrap p-[5rem_2rem] md:p-20 h-[100vh] bg-cyan-400 overflow-y-scroll">
         <?php
-        $inc_sql = "SELECT SUM(amount) AS inc_total FROM transactions WHERE mode='income'";
-        $exp_sql = "SELECT SUM(amount) AS exp_total FROM transactions WHERE mode='expense'";
+        $user_id = $_SESSION['login_id'] ;
+        
+        $inc_sql = "SELECT SUM(t.amount) AS inc_total
+                    FROM transactions t
+                    INNER JOIN cards c ON t.card_id = c.id
+                    WHERE c.user_id = $user_id AND t.mode='income'";
+
+        $exp_sql = "SELECT SUM(t.amount) AS exp_total
+                    FROM transactions t
+                    INNER JOIN cards c ON t.card_id = c.id
+                    WHERE c.user_id = $user_id AND t.mode='expense'";
+
         $inc_result = mysqli_query($conn, $inc_sql);
         $exp_result = mysqli_query($conn, $exp_sql);
 
