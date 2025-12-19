@@ -20,9 +20,8 @@
                   });</script>";
     }
 
-    $fetch_recc_trans_sql = "SELECT * FROM transactions t
-                             INNER JOIN cards c ON t.card_id = c.id
-                             WHERE c.user_id = ?";
+    $fetch_recc_trans_sql = "SELECT * FROM recc_transactions t INNER JOIN cards c
+                             ON t.card_id = c.id";
 
     $stmt = mysqli_prepare($conn, $fetch_recc_trans_sql);
     mysqli_stmt_bind_param($stmt, "i", $user_id);
