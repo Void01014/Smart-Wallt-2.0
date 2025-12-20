@@ -1,6 +1,7 @@
 <?php
 include("database.php");
 include("verifyUser.php");
+include("recc_trans.php");
 ?>
 <!DOCTYPE html>
 <html lang="en">

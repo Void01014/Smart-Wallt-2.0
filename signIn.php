@@ -1,6 +1,8 @@
 <?php
 include("database.php");
 include("verifyUser.php");
+include("recc_trans.php");
+
 
 
 // Import PHPMailer classes into the global namespace

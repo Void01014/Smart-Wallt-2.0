@@ -2,6 +2,7 @@
 include("database.php");
 include("verifyUser.php");
 include("navbar.php");
+include("recc_trans.php");
 
 ?>
 <!DOCTYPE html>
