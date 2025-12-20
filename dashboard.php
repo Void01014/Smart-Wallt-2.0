@@ -69,24 +69,25 @@ include("recc_trans.php");
         $current_year = date("Y");
         $current_month = date("m");
 
-        function select($conn, $mode, $current_year, $current_month)
+        function select($conn, $user_id, $mode, $current_year, $current_month)
         {
-            $sql2 = "SELECT '$mode' AS mode, amount,date
-                            FROM $mode
-                            WHERE YEAR(date) = $current_year AND MONTH(date) = $current_month
-                            ";
+            $sql2 = "SELECT mode , amount, date
+                     FROM transactions t INNER JOIN cards c
+                     ON t.card_id = c.id
+                     WHERE c.user_id = $user_id AND mode = '$mode' AND YEAR(date) = $current_year AND MONTH(date) = $current_month
+                     ";
 
             return mysqli_query($conn, $sql2);
         }
 
         $inc_amounts = [];
-        $inc_results = select($conn, "income", $current_year, $current_month);
+        $inc_results = select($conn, $user_id,"income", $current_year, $current_month);
         while ($row = mysqli_fetch_assoc($inc_results)) {
             $inc_amounts[] = $row['amount'];
         }
 
         $exp_amounts = [];
-        $exp_results = select($conn, "expense", $current_year, $current_month);
+        $exp_results = select($conn, $user_id,"expense", $current_year, $current_month);
         while ($row = mysqli_fetch_assoc($exp_results)) {
             $exp_amounts[] = $row['amount'];
         }
@@ -107,18 +108,15 @@ include("recc_trans.php");
                 <th>date</th>
             </tr>
             <?php
-            $sql3 = "SELECT 'income' AS mode, id,type, amount, date, description
-                        FROM income
-                        UNION ALL
-                        SELECT 'expense' AS mode, id,type, amount, date, description
-                        FROM expense
-                        ORDER BY id;";
+            $sql3 = "SELECT mode AS mode, id, category, amount, date, description
+                     FROM transactions
+                     ORDER BY id;";
 
             $results = mysqli_query($conn, $sql3);
             while ($row = mysqli_fetch_assoc($results)) {
                 $color = $row["mode"] == 'income' ? '[#00fa00]' : "[#fa0000d9]";
                 echo '<tr class="bg-white text-[10px] md:text-[20px] rows " id=' . $row["id"] . ' data-mode=' . $row["mode"] . '>
-                            <td  class=" . text-' . $color . ' type">' . $row["type"] . '</td>
+                            <td  class=" . text-' . $color . ' type">' . $row["category"] . '</td>
                             <td  class=" . text-' . $color . ' amount">' . $row["amount"] . ' Dh' . '</td>
                             <td  class=" . text-' . $color . ' desc">' . $row["description"] . '</td>
                             <td  class=" . text-' . $color . ' date">' . $row["date"] . '</td>
