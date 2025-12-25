@@ -1,4 +1,5 @@
 <?php
+session_start();
 $data = json_decode(file_get_contents("php://input"), true);
 
 if ($data['otp'] == $_SESSION['otp'] && $data['otp_id'] == $_SESSION['otp_id']) {

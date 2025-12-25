@@ -1,8 +1,7 @@
 <?php
 include("database.php");
 include("verifyUser.php");
-include("recc_trans.php");
-
+// include("recc_trans.php");
 
 
 // Import PHPMailer classes into the global namespace
@@ -129,7 +128,7 @@ require 'vendor/autoload.php';
                                     fetch('verifyOtp.php', {
                                         method: 'POST',
                                         headers: {'Content-Type': 'application/json'},
-                                        credentials: 'same-origin', 
+                                        credentials: 'same-origin',
                                         body: JSON.stringify({ otp , otp_id})
                                     })
                                     .then(res => res.json())
