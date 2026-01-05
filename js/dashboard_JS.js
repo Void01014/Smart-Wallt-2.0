@@ -36,7 +36,7 @@ document.querySelectorAll('.edit').forEach(button => {
 
         console.log(row);
 
-        const typeCell = row.querySelector('.type');
+        const categoryCell = row.querySelector('.category');
         const amountCell = row.querySelector('.amount');
         const descCell = row.querySelector('.desc');
         const dateCell = row.querySelector('.date');
@@ -44,12 +44,12 @@ document.querySelectorAll('.edit').forEach(button => {
         if (!row.dataset.editing) {
             row.dataset.editing = "true"
 
-            const typeValue = typeCell.textContent.trim();
+            const categoryValue = categoryCell.textContent.trim();
             const amountValue = amountCell.textContent.replace('Dh', '').trim();
             const descValue = descCell.textContent.trim();
             const dateValue = dateCell.textContent.trim();
 
-            typeCell.innerHTML = `<input type="text" value="${typeValue}" class="edit-type rounded-lg p-1 editable">`;
+            categoryCell.innerHTML = `<input type="text" value="${categoryValue}" class="edit-type rounded-lg p-1 editable">`;
             amountCell.innerHTML = `<input type="number" value="${amountValue}" class="edit-amount rounded-lg p-1 editable">`;
             descCell.innerHTML = `<input type="text" value="${descValue}" class="edit-desc rounded-lg p-1 editable">`;
             dateCell.innerHTML = `<input type="date" value="${dateValue}" class="edit-date rounded-lg p-1 editable">`;
@@ -58,12 +58,12 @@ document.querySelectorAll('.edit').forEach(button => {
 
             const id = row.id;
             const mode = row.dataset.mode;
-            const newType = typeCell.querySelector('input').value;
+            const newcategory = categoryCell.querySelector('input').value;
             const newAmount = amountCell.querySelector('input').value;
             const newDesc = descCell.querySelector('input').value;
             const newDate = dateCell.querySelector('input').value;
 
-            typeCell.textContent = newType;
+            categoryCell.textContent = newcategory;
             amountCell.textContent = newAmount + " Dh";
             descCell.textContent = newDesc;
             dateCell.textContent = newDate;
@@ -76,7 +76,7 @@ document.querySelectorAll('.edit').forEach(button => {
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded',
                     },
-                    body: `id=${id}&mode=${mode}&type=${newType}&amount=${newAmount}&description=${newDesc}&date=${newDate}`
+                    body: `id=${id}&mode=${mode}&category=${newcategory}&amount=${newAmount}&description=${newDesc}&date=${newDate}`
                 });
 
                 const result = await response.json();

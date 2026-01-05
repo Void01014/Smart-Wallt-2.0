@@ -102,7 +102,7 @@ include("recc_trans.php");
         </section>
         <table class="w-[100%] h-70 rounded-2xl shadow-[0_0_10px_gray] bg-blue-600  text-center rounded-3xl overflow-hidden text-white" id="table">
             <tr class="h-15 bg-blue-600 text-center">
-                <th>type</th>
+                <th>category</th>
                 <th>amount</th>
                 <th>description</th>
                 <th>date</th>
@@ -116,7 +116,7 @@ include("recc_trans.php");
             while ($row = mysqli_fetch_assoc($results)) {
                 $color = $row["mode"] == 'income' ? '[#00fa00]' : "[#fa0000d9]";
                 echo '<tr class="bg-white text-[10px] md:text-[20px] rows " id=' . $row["id"] . ' data-mode=' . $row["mode"] . '>
-                            <td  class=" . text-' . $color . ' type">' . $row["category"] . '</td>
+                            <td  class=" . text-' . $color . ' category">' . $row["category"] . '</td>
                             <td  class=" . text-' . $color . ' amount">' . $row["amount"] . ' Dh' . '</td>
                             <td  class=" . text-' . $color . ' desc">' . $row["description"] . '</td>
                             <td  class=" . text-' . $color . ' date">' . $row["date"] . '</td>
